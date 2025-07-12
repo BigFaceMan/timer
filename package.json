@@ -1,0 +1,15 @@
+{
+  "name": "ranrantimer",
+  "version": "1.0.0",
+  "description": "一个简洁实用的番茄钟应用",
+  "author": "宋世鹏",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-packager . ranra-timer --platform=win32 --arch=x64 --out=dist --overwrite --icon=assets/icon.ico"
+  },
+  "devDependencies": {
+    "electron": "^37.2.1",
+    "electron-packager": "^17.1.2"
+  }
+}
