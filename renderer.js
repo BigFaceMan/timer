@@ -2,11 +2,15 @@ const timeDisplay = document.getElementById('time');
 const startBtn = document.getElementById('startBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const resetBtn = document.getElementById('resetBtn');
+const endBtn = document.getElementById('endBtn');
 const inputMinutes = document.getElementById('inputMinutes');
 const totalDisplay = document.getElementById('total');
 const showHistoryBtn = document.getElementById('showHistoryBtn');
 const historyDiv = document.getElementById('history');
 const historyList = document.getElementById('historyList');
+const toggleTopBtn = document.getElementById('toggleTopBtn');
+
+const { ipcRenderer } = require('electron');
 
 let timer = null;
 let isPaused = false;
@@ -14,6 +18,7 @@ let startTime = 0;
 let endTime = 0;
 let pausedTime = 0;
 let remainingSeconds = 0;
+let isAlwaysOnTop = false;
 
 function getTodayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -67,6 +72,9 @@ function startTimer() {
     remainingSeconds = remaining;
     timeDisplay.textContent = formatTime(remaining);
 
+    // 发送时间给小球窗口（如果存在）
+    ipcRenderer.send('update-ball-time', formatTime(remaining));
+
     if (remaining <= 0) {
       clearInterval(timer);
       timer = null;
@@ -81,6 +89,7 @@ function startTimer() {
   pauseBtn.disabled = false;
   resetBtn.disabled = false;
   inputMinutes.disabled = true;
+  endBtn.disabled = false;
 }
 
 function pauseTimer() {
@@ -109,6 +118,24 @@ function resetTimer() {
   pauseBtn.textContent = '暂停';
   resetBtn.disabled = true;
   inputMinutes.disabled = false;
+  endBtn.disabled = true;
+}
+
+function endTimer() {
+  if (!timer) return;
+
+  clearInterval(timer);
+  timer = null;
+
+  const totalSeconds = parseInt(inputMinutes.value) * 60;
+  const doneMinutes = Math.round((totalSeconds - remainingSeconds) / 60);
+  if (doneMinutes > 0) {
+    updateTodayRecord(doneMinutes);
+    updateTotalDisplay();
+  }
+
+  alert(`计时已结束！本次已完成 ${doneMinutes} 分钟`);
+  resetTimer();
 }
 
 function renderHistory() {
@@ -122,6 +149,7 @@ function renderHistory() {
   });
 }
 
+// 绑定事件
 showHistoryBtn.addEventListener('click', () => {
   if (historyDiv.style.display === 'none') {
     historyDiv.style.display = 'block';
@@ -137,6 +165,15 @@ inputMinutes.addEventListener('change', resetTimer);
 startBtn.addEventListener('click', startTimer);
 pauseBtn.addEventListener('click', pauseTimer);
 resetBtn.addEventListener('click', resetTimer);
+endBtn.addEventListener('click', endTimer);
 
+// 悬浮按钮控制
+toggleTopBtn.addEventListener('click', () => {
+  isAlwaysOnTop = !isAlwaysOnTop;
+  ipcRenderer.send('toggle-always-on-top', isAlwaysOnTop);
+  toggleTopBtn.textContent = isAlwaysOnTop ? '取消置顶悬浮' : '开启置顶悬浮';
+});
+
+// 初始化
 updateTotalDisplay();
 resetTimer();

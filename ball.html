@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: transparent;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+
+    #ball {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-color: rgba(217, 85, 80, 0.95);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      user-select: none;
+      -webkit-app-region: drag;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      margin: auto;
+      position: absolute;
+      top: 0; bottom: 0; left: 0; right: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="ball">25:00</div>
+  <script>
+    const { ipcRenderer } = require('electron');
+    ipcRenderer.on('update-time', (_, timeText) => {
+      document.getElementById('ball').textContent = timeText;
+    });
+
+    document.getElementById('ball').addEventListener('dblclick', () => {
+        alert('双击球体将打开主窗口');
+      ipcRenderer.send('show-main-window');
+    });
+  </script>
+</body>
+</html>
