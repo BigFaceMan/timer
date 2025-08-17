@@ -60,7 +60,10 @@ app.whenReady().then(() => {
 
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: '显示主界面', click: () => {
-        if (mainWin) mainWin.show();
+        if (mainWin) {
+			ballWin.hide(); // 隐藏悬浮球窗口
+			mainWin.show();
+        }
       }
     },
     { label: '切换悬浮球模式', click: () => {

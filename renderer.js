@@ -86,6 +86,7 @@ function startTimer() {
   }, 100);
 
   startBtn.disabled = true;
+  startBtn.textContent = '开始';
   pauseBtn.disabled = false;
   resetBtn.disabled = false;
   inputMinutes.disabled = true;
@@ -98,7 +99,8 @@ function pauseTimer() {
   clearInterval(timer);
   timer = null;
   pausedTime = remainingSeconds;
-  pauseBtn.textContent = '继续';
+  // pauseBtn.textContent = '继续';
+  startBtn.textContent = '继续';
   startBtn.disabled = false;
   pauseBtn.disabled = true;
 }
@@ -114,6 +116,7 @@ function resetTimer() {
   timeDisplay.textContent = formatTime(remainingSeconds);
 
   startBtn.disabled = false;
+  startBtn.textContent = '开始';
   pauseBtn.disabled = true;
   pauseBtn.textContent = '暂停';
   resetBtn.disabled = true;
@@ -122,7 +125,7 @@ function resetTimer() {
 }
 
 function endTimer() {
-  if (!timer) return;
+  // if (!timer) return;
 
   clearInterval(timer);
   timer = null;
